@@ -235,7 +235,7 @@ public class Program extends Application {
         Application.launch(args);
     }
     private void createContent(){
-        container.setBackground(new Background(myBF));
+//        container.setBackground(new Background(myBF));
         container.getChildren().add(gp);
         container.getChildren().add(line);
         container.getChildren().add(player.getCorps());
@@ -268,6 +268,24 @@ public class Program extends Application {
         window.setWidth(widthWindow);
         window.setHeight(heightWindow);
         window.setTitle("War Game!");
+        // create a input stream
+        FileInputStream input = new FileInputStream("GamePic/gameBack.jpg");
+
+        // create a image
+        Image image = new Image(input);
+
+        // create a background image
+        BackgroundImage backgroundimage = new BackgroundImage(image,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+
+        // create Background
+        Background background = new Background(backgroundimage);
+
+        // set background
+        container.setBackground(background);
 
 
         createContent();
