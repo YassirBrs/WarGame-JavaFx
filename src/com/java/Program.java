@@ -235,6 +235,7 @@ public class Program extends Application {
         Application.launch(args);
     }
     private void createContent(){
+        
 //        container.setBackground(new Background(myBF));
         container.getChildren().add(gp);
         container.getChildren().add(line);
@@ -268,6 +269,7 @@ public class Program extends Application {
         window.setWidth(widthWindow);
         window.setHeight(heightWindow);
         window.setTitle("War Game!");
+
         // create a input stream
         FileInputStream input = new FileInputStream("GamePic/gameBack.jpg");
 
