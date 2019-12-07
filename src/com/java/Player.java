@@ -18,9 +18,9 @@ public class Player extends GraphicObject {
         ((ImageView)corps).setX(0);
         ((ImageView)corps).setY(0);
 
-        double x=zone.getX1()+50+(zone.getX2()-zone.getX1())*Math.random();
-        double y=zone.getY1()+(zone.getY2()-zone.getY1())*Math.random();
-        corps.setTranslateX(x);
-        corps.setTranslateY(y);
+        double x=zone.getX1()+50+(zone.getX2()-zone.getX1());
+        double y=zone.getY1()+(zone.getY2()-zone.getY1());
+        corps.setTranslateX((zone.getX2()-50)/2);
+        corps.setTranslateY((zone.getY2()+250)/2);
     }
 }

@@ -18,10 +18,16 @@ public class Balle extends GraphicObject {
         double x=Math.cos(Math.toRadians(rotation));
         double y=Math.sin(Math.toRadians(rotation));
         p=new Point2D(x,y);
-                direction=p.normalize().multiply(7);
+        direction=p.normalize().multiply(7);
     }
     public void update(){
         corps.setTranslateX(corps.getTranslateX()+direction.getX());
         corps.setTranslateY(corps.getTranslateY()+direction.getY());
+    }
+
+    public void rotateRight(){
+        corps.setRotate(corps.getRotate()-5);
+    }public void rotateLeft(){
+        corps.setRotate(corps.getRotate()+5);
     }
 }
