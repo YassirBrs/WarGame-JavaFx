@@ -29,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Program extends Application {
     //les elements de l'interface graphic
-    private double widthWindow = 1200;
-    private double heightWindow = 900;
+    private double widthWindow = 900;
+    private double heightWindow = 700;
     private Pane container = new Pane();
     private GridPane gp = new GridPane();
     HBox toolBar = new HBox();
@@ -60,7 +60,7 @@ public class Program extends Application {
     private List<Balle> balls = new ArrayList<>();
     private Arme arme = new Arme(player);
     private List<Arme> arme_enemy = new ArrayList<>(); //////////////////////////////////////////////////
-    private List<List<Balle>> AllBalls = new ArrayList<List<Balle>>();//////////////////////////////////////////////////
+    //private List<List<Balle>> AllBalls = new ArrayList<List<Balle>>();//////////////////////////////////////////////////
     List<Balle> balls_enemy = new ArrayList<>();//////////////////////////////////////////////////
     EventHandler<KeyEvent> event = new EventHandler<KeyEvent>() {
         @Override
@@ -107,10 +107,21 @@ public class Program extends Application {
 
             if (now - lastUpdate > 700000000) {
                 Balle ball = new Balle(arme);
-                container.getChildren().add(ball.getCorps());
-                balls.add(ball);
-                nbBallesTires++;
-                txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
+                if(player.isAlive()) {
+                	container.getChildren().add(ball.getCorps());
+	                balls.add(ball);
+	                nbBallesTires++;
+	                txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
+                }else if(nbLife == 0) {
+                		container.getChildren().removeAll(player.getCorps(), arme.getCorps());
+                        player.setAlive(false);  
+                        arme.setSortie(null);
+                        isGameOver = true;
+                }else {
+                	player.setAlive(true);
+                	txtLife.setText(" Life ( " + --nbLife + " )");
+                	//this.stop();
+                }
                 lastUpdate = now;
             }
         }
@@ -216,20 +227,19 @@ public class Program extends Application {
                     }
                 }
             }
+            
+            for (Balle balls : balls_enemy) {
+                if(balls.touch(player)) {
+                	//container.getChildren().removeAll(player.getCorps(), arme.getCorps());
+                    balls.setAlive(false);
+                    player.setAlive(false);  
+                    //arme.setSortie(null);
+                    //isGameOver = true;
+                }
+            }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//            for (Balle ball:balls_enemy){
-//                for(Monster monstre:monstres){
-//                		if (balle.touch(monstre)){
-//    	                    container.getChildren().removeAll(ball.getCorps());
-//    	                    ball.setAlive(false);
-//    	                    balls_enemy.removeIf(GraphicObject::isDead);
-//    	                    balls_enemy.remove(ball);
-//                		}
-//                }
-//            }
 
         }
 
@@ -372,3 +382,4 @@ public class Program extends Application {
         window.show();
     }
 }
+
