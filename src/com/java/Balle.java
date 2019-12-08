@@ -13,13 +13,23 @@ public class Balle extends GraphicObject {
         updateDirection(arme.getRotate());
 
     }
-    private void updateDirection(double rotation){
+    public void updateDirection(double rotation){
         Point2D p;
         double x=Math.cos(Math.toRadians(rotation));
         double y=Math.sin(Math.toRadians(rotation));
         p=new Point2D(x,y);
-        direction=p.normalize().multiply(7);
+        direction= p.normalize().multiply(7);
     }
+    //////////////////////////////////////////////////
+    public void MakeItMove(double rotation)
+    {
+        Point2D p;
+        double x=Math.cos(Math.toRadians(rotation));
+        double y=Math.sin(Math.toRadians(rotation));
+        p=new Point2D(x,y);
+        direction= p.normalize().multiply(9);
+    }
+    //////////////////////////////////////////////////
     public void update(){
         corps.setTranslateX(corps.getTranslateX()+direction.getX());
         corps.setTranslateY(corps.getTranslateY()+direction.getY());

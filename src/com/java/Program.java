@@ -29,10 +29,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Program extends Application {
     //les elements de l'interface graphic
-    private double widthWindow=1200;
-    private double heightWindow=900;
-    private Pane container=new Pane();
-    private GridPane  gp = new GridPane();
+    private double widthWindow = 1200;
+    private double heightWindow = 900;
+    private Pane container = new Pane();
+    private GridPane gp = new GridPane();
     HBox toolBar = new HBox();
     public int nbBallesTires = 0;
     public static int nbMonstresTues = 0;
@@ -50,46 +50,45 @@ public class Program extends Application {
 
     private static Text time = new Text(" Time (" + heurs + ":" + minutes + ":" + seconds + " )               ");
 
-    BackgroundFill myBF = new BackgroundFill(Color.BLUEVIOLET, new CornerRadii(1),null);
-    Line line=new Line(0,350,widthWindow,350);
-    Zone zone1=new Zone(0,50,line.getEndX()-50,line.getEndY()-50);
-    Zone zone2=new Zone(line.getStartX(),line.getStartY(),line.getEndX()-50,heightWindow-50);
+    BackgroundFill myBF = new BackgroundFill(Color.BLUEVIOLET, new CornerRadii(1), null);
+    Line line = new Line(0, 350, widthWindow, 350);
+    Zone zone1 = new Zone(0, 50, line.getEndX() - 50, line.getEndY() - 50);
+    Zone zone2 = new Zone(line.getStartX(), line.getStartY(), line.getEndX() - 50, heightWindow - 50);
     // les objets de jeu
-    private Player player=new Player(zone2);
-    private List<Monster> monstres=new ArrayList<>();
-    private List<Balle> balls=new ArrayList<>();
-    private Arme arme=new Arme(player);
-    EventHandler<KeyEvent> event=new EventHandler<KeyEvent>() {
+    private Player player = new Player(zone2);
+    private List<Monster> monstres = new ArrayList<>();
+    private List<Balle> balls = new ArrayList<>();
+    private Arme arme = new Arme(player);
+    private List<Arme> arme_enemy = new ArrayList<>(); //////////////////////////////////////////////////
+    private List<List<Balle>> AllBalls = new ArrayList<List<Balle>>();//////////////////////////////////////////////////
+    List<Balle> balls_enemy = new ArrayList<>();//////////////////////////////////////////////////
+    EventHandler<KeyEvent> event = new EventHandler<KeyEvent>() {
         @Override
         public void handle(KeyEvent event) {
-            if(event.getCode()== KeyCode.X){
+            if (event.getCode() == KeyCode.X) {
                 arme.rotateLeft();
 
             }
-            if(event.getCode()== KeyCode.W){
+            if (event.getCode() == KeyCode.W) {
                 arme.rotateRight();
             }
-//        if(event.getCode()== KeyCode.SPACE){
-//            Balle ball=new Balle(arme);
-//            container.getChildren().add(ball.getCorps());
-//            //balls.add(ball);
-//        }
-            if(event.getCode()== KeyCode.LEFT){
-                player.getCorps().setTranslateX(player.corps.getTranslateX()-5);
+            if (event.getCode() == KeyCode.LEFT) {
+                player.getCorps().setTranslateX(player.corps.getTranslateX() - 5);
                 arme.attachToPlayer(player);
                 arme.updateSortie();
             }
-            if(event.getCode()== KeyCode.RIGHT){
-                player.getCorps().setTranslateX(player.corps.getTranslateX()+5);
-                arme.attachToPlayer(player);
-                arme.updateSortie();
-            }if(event.getCode()== KeyCode.UP){
-                player.getCorps().setTranslateY(player.corps.getTranslateY()-5);
+            if (event.getCode() == KeyCode.RIGHT) {
+                player.getCorps().setTranslateX(player.corps.getTranslateX() + 5);
                 arme.attachToPlayer(player);
                 arme.updateSortie();
             }
-            if(event.getCode()== KeyCode.DOWN){
-                player.getCorps().setTranslateY(player.corps.getTranslateY()+5);
+            if (event.getCode() == KeyCode.UP) {
+                player.getCorps().setTranslateY(player.corps.getTranslateY() - 5);
+                arme.attachToPlayer(player);
+                arme.updateSortie();
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                player.getCorps().setTranslateY(player.corps.getTranslateY() + 5);
                 arme.attachToPlayer(player);
                 arme.updateSortie();
             }
@@ -97,7 +96,8 @@ public class Program extends Application {
     };
 
     AnimationTimer shooting = new AnimationTimer() {
-        private long lastUpdate = 0 ;
+        private long lastUpdate = 0;
+
         @Override
         public void handle(long now) {
             if (lastUpdate == 0) {
@@ -105,23 +105,24 @@ public class Program extends Application {
                 return;
             }
 
-            if(now - lastUpdate > 700000000) {
-                Balle ball=new Balle(arme);
+            if (now - lastUpdate > 700000000) {
+                Balle ball = new Balle(arme);
                 container.getChildren().add(ball.getCorps());
                 balls.add(ball);
                 nbBallesTires++;
-                txtBallesTires.setText(" Balles shooted : "+nbBallesTires+"               ");
-                lastUpdate = now ;
+                txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
+                lastUpdate = now;
             }
         }
     };
 
+
 //Animation Timer
 
-    AnimationTimer animation = new AnimationTimer(){
+    AnimationTimer animation = new AnimationTimer() {
         @Override
         public void handle(long now) {
-            if(isGameOver) {
+            if (isGameOver) {
                 animation.stop();
                 //container.getChildren().clear();
                 VBox cc = new VBox();
@@ -131,20 +132,20 @@ public class Program extends Application {
 //                } catch (FileNotFoundException e) {
 //                    e.printStackTrace();
 //                }
-                Image gameOverImage= new Image("GamePic/gameOver.png");
+                Image gameOverImage = new Image("GamePic/gameOver.png");
                 ImageView gameOver = new ImageView();
                 gameOver.setImage(gameOverImage);
 
-                Image replayImage= new Image("GamePic/player.png");
+                Image replayImage = new Image("GamePic/player.png");
                 ImageView replay = new ImageView();
                 replay.setImage(replayImage);
                 replay.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
-                        for(Monster monstre:monstres){
+                        for (Monster monstre : monstres) {
                             container.getChildren().remove(monstre.getCorps());
                         }
-                        for(Balle balle:balls){
+                        for (Balle balle : balls) {
                             container.getChildren().remove(balle.getCorps());
                         }
 
@@ -167,7 +168,7 @@ public class Program extends Application {
                 });
                 replay.setFitWidth(50);
                 replay.setFitHeight(50);
-                replay.setLayoutY(replay.getLayoutY()+10);
+                replay.setLayoutY(replay.getLayoutY() + 10);
                 Text finalTime = new Text("Time ( " + heurs + ":" + minutes + ":" + seconds + " )               ");
                 Text finalMonstre = new Text("Monstres Killed : " + nbMonstresTues + "               ");
                 finalTime.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
@@ -182,38 +183,106 @@ public class Program extends Application {
                 cc.setAlignment(Pos.CENTER);
                 cc.setBackground(Background.EMPTY);
                 cc.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #fff003;");
-                cc.getChildren().addAll(gameOver,finalTime,finalMonstre,finalBalles,replay);
+                cc.getChildren().addAll(gameOver, finalTime, finalMonstre, finalBalles, replay);
                 container.getChildren().addAll(cc);
-            }else {
+            } else {
                 refreshContent();
             }
         }
     };
-    private void refreshContent(){
+
+    private void refreshContent() {
         //parcourir la collection des balles pour mettre a jour leur position
 
-        for (Balle balle:balls){
-            for(Monster monstre:monstres){
-                if (balle.touch(monstre)){
-                    container.getChildren().removeAll(balle.getCorps(),monstre.getCorps());
+        for (Balle balle : balls) {
+            for (Monster monstre : monstres) {
+                if (balle.touch(monstre)) {
+                    container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
                     balle.setAlive(false);
                     monstre.setAlive(false);
                     nbMonstresTues++;
                     txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
                 }
             }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            for (Arme arme_shoot : arme_enemy) {
+                for (Monster monstre : monstres) {
+                    if (balle.touch(monstre)) {
+                        if (arme_shoot.isAttachedTo(monstre)) {
+                            container.getChildren().remove(arme_shoot.getCorps());
+                        }
+                    }
+                }
+            }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//            for (Balle ball:balls_enemy){
+//                for(Monster monstre:monstres){
+//                		if (balle.touch(monstre)){
+//    	                    container.getChildren().removeAll(ball.getCorps());
+//    	                    ball.setAlive(false);
+//    	                    balls_enemy.removeIf(GraphicObject::isDead);
+//    	                    balls_enemy.remove(ball);
+//                		}
+//                }
+//            }
+
         }
+
+
         monstres.removeIf(GraphicObject::isDead);
         balls.removeIf(GraphicObject::isDead);
-        for (Balle balle:balls){
+
+        for (Balle balle : balls) {
             balle.update();
         }
-        if(Math.random()<0.01) {
+
+        if (Math.random() < 0.01) {
             Monster monster = new Monster(zone1);
+//////////////////////////////////////////////////
+            Arme armed = new Arme(monster);
+            armed.attachToMonster(monster);
+//////////////////////////////////////////////////
             container.getChildren().add(monster.getCorps());
+            container.getChildren().add(armed.getCorps());//////////////////////////////////////////////////
             monstres.add(monster);
+            arme_enemy.add(armed);//////////////////////////////////////////////////
+
+//////////////////////////////////////////////////
+            new AnimationTimer() {
+                private long lastUpdate = 0;
+
+                @Override
+                public void handle(long now) {
+                    if (lastUpdate == 0) {
+                        lastUpdate = now;
+                        return;
+                    }
+
+                    if (now - lastUpdate > 700000000) {
+                        Balle ball = new Balle(armed);
+                        ball.MakeItMove(90);
+                        if (monster.isAlive()) {
+                            container.getChildren().add(ball.getCorps());
+                            balls_enemy.add(ball);
+                        }
+                        lastUpdate = now;
+                    }
+                }
+            }.start();
+//////////////////////////////////////////////////
         }
+//////////////////////////////////////////////////
+        for (Balle balls : balls_enemy) {
+            balls.update();
+        }
+//////////////////////////////////////////////////
     }
+
     public static void main(String[] args) {
         final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         ses.scheduleWithFixedDelay(new Runnable() {
@@ -221,11 +290,11 @@ public class Program extends Application {
             public void run() {
                 time.setText((" Time  " + heurs + ":" + minutes + ":" + seconds + "               "));
                 seconds++;
-                if(seconds == 60){
+                if (seconds == 60) {
                     minutes++;
                     seconds = 0;
                 }
-                if(minutes == 60){
+                if (minutes == 60) {
                     heurs++;
                     minutes = 0;
                 }
@@ -234,14 +303,16 @@ public class Program extends Application {
         // write your code here
         Application.launch(args);
     }
-    private void createContent(){
-        
+
+    private void createContent() {
+
 //        container.setBackground(new Background(myBF));
         container.getChildren().add(gp);
         container.getChildren().add(line);
         container.getChildren().add(player.getCorps());
         container.getChildren().add(arme.getCorps());
         container.getChildren().add(arme.getSortie());
+
         toolBar.setAlignment(Pos.CENTER_RIGHT);
         toolBar.setPrefHeight(25);
         toolBar.setMinHeight(25);
@@ -249,6 +320,7 @@ public class Program extends Application {
         toolBar.getChildren().add(new topBar());
         container.getChildren().add(toolBar);
     }
+
     class topBar extends HBox {
         public topBar() {
             txtBallesTires.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
@@ -259,11 +331,12 @@ public class Program extends Application {
             time.setFill(Color.WHITE);
             txtLife.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
             txtLife.setFill(Color.WHITE);
-            this.getChildren().addAll( txtMonstresTues,txtBallesTires, time, txtLife);
+            this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, txtLife);
             this.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #000000  ;");
             this.setMinWidth(widthWindow);
         }
     }
+
     @Override
     public void start(Stage window) throws Exception {
         window.setWidth(widthWindow);
@@ -291,7 +364,7 @@ public class Program extends Application {
 
 
         createContent();
-        Scene scene=new Scene(container);
+        Scene scene = new Scene(container);
         window.setScene(scene);
         shooting.start();
         animation.start();
