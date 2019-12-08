@@ -23,7 +23,8 @@ public class Arme {
         this.sortie = sortie;
     }
 
-    private Circle sortie=new Circle(-6,0,5);
+    private Circle sortie=new Circle();
+    
     public Arme(GraphicObject player){
         corps.setTranslateX(player.getCorps().getTranslateX());
         corps.setTranslateY(player.getCorps().getTranslateY());
@@ -35,19 +36,19 @@ public class Arme {
         corps.setTranslateX(player.corps.getTranslateX());
         corps.setTranslateY(player.corps.getTranslateY());
     }
-    //////////////////////////////////////////////////
+//////////////////////////////////////////////////
     public void attachToMonster(Monster monster){
         corps.setTranslateX(monster.corps.getTranslateX());
         corps.setTranslateY(monster.corps.getTranslateY());
     }
-    //////////////////////////////////////////////////
+//////////////////////////////////////////////////
     public boolean isAttachedTo(Monster monster){
         if(corps.getTranslateX() == monster.corps.getTranslateX() && corps.getTranslateY() == monster.corps.getTranslateY()) {
-            return true;
+        	return true;
         }
         return false;
     }
-    //////////////////////////////////////////////////
+//////////////////////////////////////////////////
     public void updateSortie(){
         sortie.setCenterX(corps.getTranslateX());
         sortie.setCenterY(corps.getTranslateY()+25);
