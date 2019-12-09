@@ -57,7 +57,7 @@ public class Program extends Application {
     //les elements de l'interface graphic
     private double widthWindow = 1200;
     private double heightWindow = 900;
-    public Rectangle porte = new Rectangle(widthWindow - 23, 350, 7, 90);
+    public Rectangle porte = new Rectangle(widthWindow - 23, 350, 0, 0);
 
     private Pane container = new Pane();
     private GridPane gp = new GridPane();
@@ -102,9 +102,11 @@ public class Program extends Application {
             }
 
             if (now - lastUpdate > 700000000) {
-                Balle ball = new Balle(arme);
-                container.getChildren().add(ball.getCorps());
-                balls.add(ball);
+                if (player.isAlive()) {
+                    Balle ball = new Balle(arme);
+                    container.getChildren().add(ball.getCorps());
+                    balls.add(ball);
+                }
                 nbBallesTires++;
                 txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
                 lastUpdate = now;
@@ -245,16 +247,16 @@ public class Program extends Application {
         for (Balle balle : balls) {
             for (Monster monstre : monstres) {
 //                for (Arme armeShoot : arme_enemy) {
-                    if (balle.touch(monstre)) {
-                        container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
-                        balle.setAlive(false);
-                        monstre.setAlive(false);
+                if (balle.touch(monstre)) {
+                    container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
+                    balle.setAlive(false);
+                    monstre.setAlive(false);
 //                        if (armeShoot.isAttachedTo(monstre)) {
 //                            container.getChildren().remove(armeShoot.getCorps());
 //                        }
-                        nbMonstresTues++;
-                        txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
-                    }
+                    nbMonstresTues++;
+                    txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
+                }
 
             }
             for (Arme arme_shoot : arme_enemy) {
@@ -297,6 +299,10 @@ public class Program extends Application {
                 }
                 nbLife--;
                 if (nbLife <= 0) {
+                    player.setAlive(false);
+                    for (Monster monstre : monstres) {
+                        monstre.setAlive(false);
+                    }
                     isGameOver = true;
                 }
                 txtLife.setText(" Life ( " + nbLife + " )");
@@ -376,7 +382,7 @@ public class Program extends Application {
         container.getChildren().add(gp);
         line.setStrokeWidth(0);
         container.getChildren().add(line);
-        porte.setFill(Color.BLACK);
+        porte.setFill(Color.GREEN);
         container.getChildren().add(porte);
         container.getChildren().add(player.getCorps());
         container.getChildren().add(arme.getCorps());
@@ -401,7 +407,7 @@ public class Program extends Application {
             txtLife.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
             txtLife.setFill(Color.WHITE);
             this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, txtLife);
-            this.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #000000  ;");
+            this.setStyle("-fx-padding: 5 0 5 0;-fx-background-color: #000000  ;");
             this.setMinWidth(widthWindow);
         }
 
