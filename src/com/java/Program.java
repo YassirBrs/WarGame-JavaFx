@@ -177,7 +177,8 @@ public class Program extends Application {
                         txtMonstresTues.setText(" Monstres killed : 0                ");
                         nbBallesTires = 0;
                         txtBallesTires.setText(" Balles shooted : 0                ");
-                        txtLife.setText(" Time ( 0:0:0 )");
+                        txtLife.setText(" Life ( 3 )");
+                        player.setAlive(true);
                         isGameOver = false;
                         container.getChildren().remove(cc);
                         animation.start();
@@ -187,11 +188,11 @@ public class Program extends Application {
                 replay.setFitHeight(53);
 //                replay.setStyle(se);
                 replay.setLayoutY(replay.getLayoutY() + 10);
-                Text finalTime = new Text("Time ( " + heurs + ":" + minutes + ":" + seconds + " )               ");
-                Text finalMonstre = new Text("Monstres Killed : " + nbMonstresTues + "               ");
+                Text finalTime = new Text("              Time ( " + heurs + ":" + minutes + ":" + seconds + " )               ");
+                Text finalMonstre = new Text("              Monstres Killed : " + nbMonstresTues + "               ");
                 finalTime.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
                 finalTime.setFill(Color.BLACK);
-                Text finalBalles = new Text("Balles Shooted : " + nbBallesTires + "               ");
+                Text finalBalles = new Text("              Balles Shooted : " + nbBallesTires + "               ");
                 finalMonstre.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
                 finalMonstre.setFill(Color.BLACK);
                 finalBalles.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
@@ -302,6 +303,7 @@ public class Program extends Application {
                     player.setAlive(false);
                     for (Monster monstre : monstres) {
                         monstre.setAlive(false);
+                        container.getChildren().remove(monstre.getCorps());
                     }
                     isGameOver = true;
                 }
