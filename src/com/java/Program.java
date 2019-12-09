@@ -58,17 +58,18 @@ public class Program extends Application {
     private double widthWindow = 1200;
     private double heightWindow = 900;
     public Rectangle porte = new Rectangle(widthWindow - 23, 350, 0, 0);
-
+    //    public  AutoShoot autoShoot=new AutoShoot(Player)
     private Pane container = new Pane();
     private GridPane gp = new GridPane();
     HBox toolBar = new HBox();
     public int nbBallesTires = 0;
     public static int nbMonstresTues = 0;
-    private int nbLife = 3;
+    private int nbLife = 5;
     private Text txtMonstresTues = new Text(" Monstres Killed : " + nbBallesTires + "               ");
     private Text txtBallesTires = new Text(" Balls Shooted : " + nbMonstresTues + "               ");
     private Text txtLife = new Text(" Life ( " + nbLife + " )");
     private Boolean isGameOver = false;
+
 
 
     // timer
@@ -106,6 +107,9 @@ public class Program extends Application {
                     Balle ball = new Balle(arme);
                     container.getChildren().add(ball.getCorps());
                     balls.add(ball);
+                    AutoShoot autoShoot = new AutoShoot(player);
+//                    arme.resetArm(autoShoot.getAngel());
+
                 }
                 nbBallesTires++;
                 txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
@@ -252,6 +256,9 @@ public class Program extends Application {
                     container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
                     balle.setAlive(false);
                     monstre.setAlive(false);
+//                    AutoShoot autoShoot = new AutoShoot(player, monstre);
+//                    arme.resetArm(autoShoot.getAngel());
+
 //                        if (armeShoot.isAttachedTo(monstre)) {
 //                            container.getChildren().remove(armeShoot.getCorps());
 //                        }
@@ -322,12 +329,28 @@ public class Program extends Application {
 
         if (Math.random() < 0.01) {
             Monster monster = new Monster(zone1);
+            AutoShoot autoShoot = new AutoShoot(player, monster);
             Arme armed = new Arme(monster);
             armed.attachToMonster(monster);
             container.getChildren().add(monster.getCorps());
             container.getChildren().add(armed.getCorps());
             monstres.add(monster);
             arme_enemy.add(armed);
+
+            System.out.println("x" + autoShoot.x);
+            System.out.println("y" + autoShoot.y);
+            System.out.println("z" + autoShoot.z);
+            System.out.println("y/z : " + autoShoot.y / autoShoot.z);
+            System.out.println("t : " + autoShoot.t);
+            System.out.println("angel : " + autoShoot.getAngel());
+            arme.rotateArme(autoShoot.getAngel());
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            if (monster.isAlive() == false) {
+//            }
 
             new AnimationTimer() {
                 private long lastUpdate = 0;

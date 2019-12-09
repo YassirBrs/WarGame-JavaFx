@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Sounds {
-    public static void SoundPlayerHit(){
+    public static void SoundPlayerHit() {
         try {
             File soundFile = new File("Sounds/PlayerHit.wav");
             AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
