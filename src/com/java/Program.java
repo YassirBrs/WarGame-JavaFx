@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -28,9 +29,36 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Program extends Application {
+    //BackGround
+    // create a input stream
+    FileInputStream input;
+
+    {
+        try {
+            input = new FileInputStream("GamePic/gameBack.jpg");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // create a image
+    Image image = new Image(input);
+
+    // create a background image
+    BackgroundImage backgroundimage = new BackgroundImage(image,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            BackgroundSize.DEFAULT);
+
+    // create Background
+    Background background = new Background(backgroundimage);
+
     //les elements de l'interface graphic
     private double widthWindow = 1200;
     private double heightWindow = 900;
+    public Rectangle porte = new Rectangle(widthWindow - 23, 350, 7, 90);
+
     private Pane container = new Pane();
     private GridPane gp = new GridPane();
     HBox toolBar = new HBox();
@@ -62,38 +90,6 @@ public class Program extends Application {
     private List<Arme> arme_enemy = new ArrayList<>(); //////////////////////////////////////////////////
     private List<List<Balle>> AllBalls = new ArrayList<List<Balle>>();//////////////////////////////////////////////////
     List<Balle> balls_enemy = new ArrayList<>();//////////////////////////////////////////////////
-    EventHandler<KeyEvent> event = new EventHandler<KeyEvent>() {
-        @Override
-        public void handle(KeyEvent event) {
-            if (event.getCode() == KeyCode.X) {
-                arme.rotateLeft();
-
-            }
-            if (event.getCode() == KeyCode.W) {
-                arme.rotateRight();
-            }
-            if (event.getCode() == KeyCode.LEFT) {
-                player.getCorps().setTranslateX(player.corps.getTranslateX() - 5);
-                arme.attachToPlayer(player);
-                arme.updateSortie();
-            }
-            if (event.getCode() == KeyCode.RIGHT) {
-                player.getCorps().setTranslateX(player.corps.getTranslateX() + 5);
-                arme.attachToPlayer(player);
-                arme.updateSortie();
-            }
-            if (event.getCode() == KeyCode.UP) {
-                player.getCorps().setTranslateY(player.corps.getTranslateY() - 5);
-                arme.attachToPlayer(player);
-                arme.updateSortie();
-            }
-            if (event.getCode() == KeyCode.DOWN) {
-                player.getCorps().setTranslateY(player.corps.getTranslateY() + 5);
-                arme.attachToPlayer(player);
-                arme.updateSortie();
-            }
-        }
-    };
 
     AnimationTimer shooting = new AnimationTimer() {
         private long lastUpdate = 0;
@@ -132,21 +128,40 @@ public class Program extends Application {
 //                } catch (FileNotFoundException e) {
 //                    e.printStackTrace();
 //                }
-                Image gameOverImage = new Image("GamePic/gameOver.png");
+                Image gameOverImage = null;
+                try {
+                    gameOverImage = new Image(new FileInputStream("GamePic/gameOver.png"));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 ImageView gameOver = new ImageView();
                 gameOver.setImage(gameOverImage);
 
-                Image replayImage = new Image("GamePic/player.png");
+                Image replayImage = null;
+                try {
+                    replayImage = new Image(new FileInputStream("GamePic/play-again.png"));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 ImageView replay = new ImageView();
                 replay.setImage(replayImage);
                 replay.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
+
                         for (Monster monstre : monstres) {
-                            container.getChildren().remove(monstre.getCorps());
+                            monstre.setAlive(false);
+                            container.getChildren().removeAll(monstre.getCorps());
+
                         }
                         for (Balle balle : balls) {
                             container.getChildren().remove(balle.getCorps());
+                        }
+                        for (Balle balls : balls_enemy) {
+                            container.getChildren().remove(balls.getCorps());
+                        }
+                        for (Arme armeShoot : arme_enemy) {
+                            container.getChildren().remove(armeShoot.getCorps());
                         }
 
                         heurs = 0;
@@ -155,7 +170,7 @@ public class Program extends Application {
                         nbLife = 3;
                         monstres.clear();
                         balls.clear();
-
+                        balls_enemy.clear();
                         nbMonstresTues = 0;
                         txtMonstresTues.setText(" Monstres killed : 0                ");
                         nbBallesTires = 0;
@@ -166,8 +181,9 @@ public class Program extends Application {
                         animation.start();
                     }
                 });
-                replay.setFitWidth(50);
-                replay.setFitHeight(50);
+                replay.setFitWidth(200);
+                replay.setFitHeight(53);
+//                replay.setStyle(se);
                 replay.setLayoutY(replay.getLayoutY() + 10);
                 Text finalTime = new Text("Time ( " + heurs + ":" + minutes + ":" + seconds + " )               ");
                 Text finalMonstre = new Text("Monstres Killed : " + nbMonstresTues + "               ");
@@ -181,12 +197,44 @@ public class Program extends Application {
                 cc.setPrefWidth(widthWindow);
                 cc.setPrefHeight(heightWindow);
                 cc.setAlignment(Pos.CENTER);
-                cc.setBackground(Background.EMPTY);
-                cc.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #fff003;");
+                cc.setBackground(background);
+//                cc.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #000000;");
                 cc.getChildren().addAll(gameOver, finalTime, finalMonstre, finalBalles, replay);
                 container.getChildren().addAll(cc);
             } else {
                 refreshContent();
+            }
+        }
+    };
+    EventHandler<KeyEvent> event = new EventHandler<KeyEvent>() {
+        @Override
+        public void handle(KeyEvent event) {
+            if (event.getCode() == KeyCode.X) {
+                arme.rotateLeft();
+
+            }
+            if (event.getCode() == KeyCode.W) {
+                arme.rotateRight();
+            }
+            if (event.getCode() == KeyCode.LEFT) {
+                player.getCorps().setTranslateX(player.corps.getTranslateX() - 5);
+                arme.attachToPlayer(player);
+                arme.updateSortie();
+            }
+            if (event.getCode() == KeyCode.RIGHT) {
+                player.getCorps().setTranslateX(player.corps.getTranslateX() + 5);
+                arme.attachToPlayer(player);
+                arme.updateSortie();
+            }
+            if (event.getCode() == KeyCode.UP) {
+                player.getCorps().setTranslateY(player.corps.getTranslateY() - 5);
+                arme.attachToPlayer(player);
+                arme.updateSortie();
+            }
+            if (event.getCode() == KeyCode.DOWN) {
+                player.getCorps().setTranslateY(player.corps.getTranslateY() + 5);
+                arme.attachToPlayer(player);
+                arme.updateSortie();
             }
         }
     };
@@ -196,17 +244,19 @@ public class Program extends Application {
 
         for (Balle balle : balls) {
             for (Monster monstre : monstres) {
-                if (balle.touch(monstre)) {
-                    container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
-                    balle.setAlive(false);
-                    monstre.setAlive(false);
-                    nbMonstresTues++;
-                    txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
-                }
+//                for (Arme armeShoot : arme_enemy) {
+                    if (balle.touch(monstre)) {
+                        container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
+                        balle.setAlive(false);
+                        monstre.setAlive(false);
+//                        if (armeShoot.isAttachedTo(monstre)) {
+//                            container.getChildren().remove(armeShoot.getCorps());
+//                        }
+                        nbMonstresTues++;
+                        txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
+                    }
+
             }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             for (Arme arme_shoot : arme_enemy) {
                 for (Monster monstre : monstres) {
                     if (balle.touch(monstre)) {
@@ -233,9 +283,30 @@ public class Program extends Application {
 
         }
 
+        for (Balle balls : balls_enemy) {
+
+            balls.update();
+            if (balls.touch(player)) {
+                container.getChildren().remove(balls.getCorps());
+                balls.setAlive(false);
+                Sounds.SoundPlayerHit();
+                try {
+                    TimeUnit.MILLISECONDS.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                nbLife--;
+                if (nbLife <= 0) {
+                    isGameOver = true;
+                }
+                txtLife.setText(" Life ( " + nbLife + " )");
+            }
+        }
 
         monstres.removeIf(GraphicObject::isDead);
         balls.removeIf(GraphicObject::isDead);
+        balls_enemy.removeIf(GraphicObject::isDead);
+
 
         for (Balle balle : balls) {
             balle.update();
@@ -243,16 +314,13 @@ public class Program extends Application {
 
         if (Math.random() < 0.01) {
             Monster monster = new Monster(zone1);
-//////////////////////////////////////////////////
             Arme armed = new Arme(monster);
             armed.attachToMonster(monster);
-//////////////////////////////////////////////////
             container.getChildren().add(monster.getCorps());
-            container.getChildren().add(armed.getCorps());//////////////////////////////////////////////////
+            container.getChildren().add(armed.getCorps());
             monstres.add(monster);
-            arme_enemy.add(armed);//////////////////////////////////////////////////
+            arme_enemy.add(armed);
 
-//////////////////////////////////////////////////
             new AnimationTimer() {
                 private long lastUpdate = 0;
 
@@ -263,13 +331,14 @@ public class Program extends Application {
                         return;
                     }
 
-                    if (now - lastUpdate > 700000000) {
+                    if (now - lastUpdate > 1999999999) {
                         Balle ball = new Balle(armed);
                         ball.MakeItMove(90);
                         if (monster.isAlive()) {
                             container.getChildren().add(ball.getCorps());
                             balls_enemy.add(ball);
                         }
+
                         lastUpdate = now;
                     }
                 }
@@ -277,9 +346,6 @@ public class Program extends Application {
 //////////////////////////////////////////////////
         }
 //////////////////////////////////////////////////
-        for (Balle balls : balls_enemy) {
-            balls.update();
-        }
 //////////////////////////////////////////////////
     }
 
@@ -308,7 +374,10 @@ public class Program extends Application {
 
 //        container.setBackground(new Background(myBF));
         container.getChildren().add(gp);
+        line.setStrokeWidth(0);
         container.getChildren().add(line);
+        porte.setFill(Color.BLACK);
+        container.getChildren().add(porte);
         container.getChildren().add(player.getCorps());
         container.getChildren().add(arme.getCorps());
         container.getChildren().add(arme.getSortie());
@@ -335,6 +404,7 @@ public class Program extends Application {
             this.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #000000  ;");
             this.setMinWidth(widthWindow);
         }
+
     }
 
     @Override
@@ -343,27 +413,21 @@ public class Program extends Application {
         window.setHeight(heightWindow);
         window.setTitle("War Game!");
 
-        // create a input stream
-        FileInputStream input = new FileInputStream("GamePic/gameBack.jpg");
-
-        // create a image
-        Image image = new Image(input);
-
-        // create a background image
-        BackgroundImage backgroundimage = new BackgroundImage(image,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-
-        // create Background
-        Background background = new Background(backgroundimage);
 
         // set background
         container.setBackground(background);
 
-
         createContent();
+
+        HBox toolBar = new HBox();
+        toolBar.setAlignment(Pos.CENTER_RIGHT);
+        toolBar.setPrefHeight(25);
+        toolBar.setMinHeight(25);
+        toolBar.setMaxHeight(25);
+        toolBar.getChildren().add(new topBar());
+        container.getChildren().add(toolBar);
+
+
         Scene scene = new Scene(container);
         window.setScene(scene);
         shooting.start();
