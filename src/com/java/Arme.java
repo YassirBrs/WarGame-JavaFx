@@ -61,6 +61,7 @@ public class Arme {
         sortie.setCenterY(corps.getTranslateY() + 25);
 
     }
+
     //si on X:tourner a droite
     //si on Y:tourner a gauche
 
@@ -77,7 +78,7 @@ public class Arme {
     }
 
     public void rotateArme(double angel) {
-        corps.setRotate(-angel);
+        corps.setRotate(-angel+3);
     }
 
     public void resetArm(double angel) {

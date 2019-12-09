@@ -14,6 +14,9 @@ public class Balle extends GraphicObject {
         updateDirection(arme.getRotate());
 
     }
+    public boolean touched(Arme arm) {
+        return corps.getBoundsInParent().intersects(arm.getCorps().getBoundsInParent());
+    }
 
     public void updateDirection(double rotation) {
         Point2D p;

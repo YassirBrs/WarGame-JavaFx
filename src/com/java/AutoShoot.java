@@ -36,7 +36,7 @@ public class AutoShoot {
 //            this.x=Math.sqrt(-zy);
 //            this.x=-this.x;
 //        }
-        this.t = Math.atan(Math.tan(y / (z)));
+        this.t = (float)Math.atan2(y , z);
         this.setAngel((float) Math.toDegrees(t));
         System.out.println(angel);
     }
