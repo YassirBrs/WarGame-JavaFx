@@ -55,8 +55,8 @@ public class Program extends Application {
     Background background = new Background(backgroundimage);
 
     //les elements de l'interface graphic
-    private double widthWindow = 1200;
-    private double heightWindow = 900;
+    private double widthWindow = 900;
+    private double heightWindow = 700;
     public Rectangle porte = new Rectangle(widthWindow - 23, 350, 0, 0);
     //    public  AutoShoot autoShoot=new AutoShoot(Player)
     private Pane container = new Pane();
@@ -106,7 +106,7 @@ public class Program extends Application {
                     Balle ball = new Balle(arme);
                     container.getChildren().add(ball.getCorps());
                     balls.add(ball);
-                    AutoShoot autoShoot = new AutoShoot(player);
+                    //AutoShoot autoShoot = new AutoShoot(player);
 //                    arme.resetArm(autoShoot.getAngel());
 
                 }
@@ -226,6 +226,9 @@ public class Program extends Application {
                 player.getCorps().setTranslateX(player.corps.getTranslateX() - 5);
                 arme.attachToPlayer(player);
                 arme.updateSortie();
+//                for (Arme arme_shoot : arme_enemy) {
+//                	arme_shoot.
+//                }
             }
             if (event.getCode() == KeyCode.RIGHT) {
                 player.getCorps().setTranslateX(player.corps.getTranslateX() + 5);
@@ -255,12 +258,6 @@ public class Program extends Application {
                         container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
                         balle.setAlive(false);
                         monstre.setAlive(false);
-//                    AutoShoot autoShoot = new AutoShoot(player, monstre);
-//                    arme.resetArm(autoShoot.getAngel());
-
-//                        if (armeShoot.isAttachedTo(monstre)) {
-//                            container.getChildren().remove(armeShoot.getCorps());
-//                        }}
                         nbMonstresTues++;
                     }
                     txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
@@ -274,28 +271,20 @@ public class Program extends Application {
                                 container.getChildren().remove(arme_shoot.getCorps());
                             }
                         }
-
+                    }
                 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//            for (Balle ball:balls_enemy){
-//                for(Monster monstre:monstres){
-//                		if (balle.touch(monstre)){
-//    	                    container.getChildren().removeAll(ball.getCorps());
-//    	                    ball.setAlive(false);
-//    	                    balls_enemy.removeIf(GraphicObject::isDead);
-//    	                    balls_enemy.remove(ball);
-//                		}
-//                }
-//            }
-
-            }}
+        	}
 
             for (Balle balls : balls_enemy) {
 
                 balls.update();
+                for (Monster monstre : monstres) {
+	                for (Arme arme_shoot : arme_enemy) {
+	                	AutoShoot autoShoot = new AutoShoot(player, monstre);
+	                	arme_shoot.rotateArme(autoShoot.getAngel());
+	                }
+                }
+                
                 if (balls.touch(player)) {
                     container.getChildren().remove(balls.getCorps());
                     balls.setAlive(false);
@@ -335,23 +324,10 @@ public class Program extends Application {
                 container.getChildren().add(monster.getCorps());
                 container.getChildren().add(armed.getCorps());
                 monstres.add(monster);
+                //arme.rotateArme(autoShoot.getAngel());
+                armed.rotateArme(autoShoot.getAngel());
                 arme_enemy.add(armed);
-
-                System.out.println("x" + autoShoot.x);
-                System.out.println("y" + autoShoot.y);
-                System.out.println("z" + autoShoot.z);
-                System.out.println("y/z : " + autoShoot.y / autoShoot.z);
-                System.out.println("t : " + autoShoot.t);
-                System.out.println("angel : " + autoShoot.getAngel());
-                arme.rotateArme(autoShoot.getAngel());
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            if (monster.isAlive() == false) {
-//            }
-
+                
                 new AnimationTimer() {
                     private long lastUpdate = 0;
 
@@ -364,7 +340,7 @@ public class Program extends Application {
 
                         if (now - lastUpdate > 1999999999) {
                             Balle ball = new Balle(armed);
-                            ball.MakeItMove(90);
+                            //ball.MakeItMove(-autoShoot.getAngel());
                             if (monster.isAlive()) {
                                 container.getChildren().add(ball.getCorps());
                                 balls_enemy.add(ball);
