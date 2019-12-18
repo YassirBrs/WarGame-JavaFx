@@ -41,7 +41,7 @@ public class Program extends Application {
         }
     }
 
-    
+
     // create a image
     Image image = new Image(input);
 
@@ -71,6 +71,15 @@ public class Program extends Application {
     private Text txtLife = new Text(" Life ( " + nbLife + " )");
     private Boolean isGameOver = false;
 
+    private double proba_monster = 1999999999;
+
+    public double getProba_monster() {
+        return proba_monster;
+    }
+
+    public void setProba_monster(double proba_monster) {
+        this.proba_monster = proba_monster;
+    }
 
     // timer
     public static int heurs = 00;
@@ -119,21 +128,14 @@ public class Program extends Application {
     };
 
 
-//Animation Timer
+//Animation Timer of Gameover
 
     AnimationTimer animation = new AnimationTimer() {
         @Override
         public void handle(long now) {
             if (isGameOver) {
                 animation.stop();
-                //container.getChildren().clear();
                 VBox cc = new VBox();
-//                ImageView gameOver = null;
-//                try {
-//                    gameOver = Tools.createImageView("photosJeu/gameOver1.png");
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
                 Image gameOverImage = null;
                 try {
                     gameOverImage = new Image(new FileInputStream("GamePic/gameOver.png"));
@@ -251,196 +253,216 @@ public class Program extends Application {
 
     private void refreshContent() {
         //parcourir la collection des balles pour mettre a jour leur position
-
+        //eliminer les monsters
         for (Balle balle : balls) {
             for (Monster monstre : monstres) {
 
-                    if (balle.touch(monstre) ) {
-                        container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
-                        balle.setAlive(false);
-                        monstre.setAlive(false);
-                        nbMonstresTues++;
-                    }
-                    txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
-
-
+                if (balle.touch(monstre)) {
+                    container.getChildren().removeAll(balle.getCorps(), monstre.getCorps());
+                    balle.setAlive(false);
+                    monstre.setAlive(false);
+                    nbMonstresTues++;
                 }
-                for (Arme arme_shoot : arme_enemy) {
-                    for (Monster monstre : monstres) {
-                        if (balle.touch(monstre)) {
-                            if (arme_shoot.isAttachedTo(monstre)) {
-                                container.getChildren().remove(arme_shoot.getCorps());
-                            }
-                        }
-                    }
-                }
-        	}
+                txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
 
-            for (Balle balls : balls_enemy) {
 
-                balls.update();
+            }
+            //detruire les balles du monster
+            for (Arme arme_shoot : arme_enemy) {
                 for (Monster monstre : monstres) {
-	                for (Arme arme_shoot : arme_enemy) {
-	                	AutoShoot autoShoot = new AutoShoot(player, monstre);
-	                	arme_shoot.rotateArme(autoShoot.getAngel());
-	                }
-                }
-                
-                if (balls.touch(player)) {
-                    container.getChildren().remove(balls.getCorps());
-                    balls.setAlive(false);
-                    Sounds.SoundPlayerHit();
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    nbLife--;
-                    if (nbLife <= 0) {
-                        player.setAlive(false);
-                        for (Monster monstre : monstres) {
-                            monstre.setAlive(false);
-                            container.getChildren().remove(monstre.getCorps());
+                    if (balle.touch(monstre)) {
+                        if (arme_shoot.isAttachedTo(monstre)) {
+                            container.getChildren().remove(arme_shoot.getCorps());
                         }
-                        isGameOver = true;
                     }
-                    txtLife.setText(" Life ( " + nbLife + " )");
+                }
+            }
+        }
+        //aimbot monster
+        for (Balle balls : balls_enemy) {
+
+            balls.update();
+            for (Monster monstre : monstres) {
+                for (Arme arme_shoot : arme_enemy) {
+                    AutoShoot autoShoot = new AutoShoot(player, monstre);
+                    arme_shoot.rotateArme(autoShoot.getAngel());
                 }
             }
 
-            monstres.removeIf(GraphicObject::isDead);
-            balls.removeIf(GraphicObject::isDead);
-            balls_enemy.removeIf(GraphicObject::isDead);
-
-
-            for (Balle balle : balls) {
-                balle.update();
-            }
-
-            if (Math.random() < 0.005) {
-                Monster monster = new Monster(zone1);
-                AutoShoot autoShoot = new AutoShoot(player, monster);
-                Arme armed = new Arme(monster);
-                armed.attachToMonster(monster);
-                container.getChildren().add(monster.getCorps());
-                container.getChildren().add(armed.getCorps());
-                monstres.add(monster);
-                arme.rotateArme(autoShoot.getAngel()+180);
-                armed.rotateArme(autoShoot.getAngel()+6);
-                arme_enemy.add(armed);
-                
-                new AnimationTimer() {
-                    private long lastUpdate = 0;
-
-                    @Override
-                    public void handle(long now) {
-                        if (lastUpdate == 0) {
-                            lastUpdate = now;
-                            return;
-                        }
-
-                        if (now - lastUpdate > 1999999999) {
-                            Balle ball = new Balle(armed);
-                            //ball.MakeItMove(-autoShoot.getAngel());
-                            if (monster.isAlive()) {
-                                container.getChildren().add(ball.getCorps());
-                                balls_enemy.add(ball);
-                            }
-
-                            lastUpdate = now;
-                        }
+            if (balls.touch(player)) {
+                container.getChildren().remove(balls.getCorps());
+                balls.setAlive(false);
+                Sounds.SoundPlayerHit();
+//                    try {
+//                        TimeUnit.MILLISECONDS.sleep(50);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                nbLife--;
+                if (nbLife <= 0) {
+                    player.setAlive(false);
+                    for (Monster monstre : monstres) {
+                        monstre.setAlive(false);
+                        container.getChildren().remove(monstre.getCorps());
                     }
-                }.start();
-//////////////////////////////////////////////////
+                    isGameOver = true;
+                }
+                txtLife.setText(" Life ( " + nbLife + " )");
             }
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
         }
 
-        public static void main (String[]args){
-            final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-            ses.scheduleWithFixedDelay(new Runnable() {
+        monstres.removeIf(GraphicObject::isDead);
+        balls.removeIf(GraphicObject::isDead);
+        balls_enemy.removeIf(GraphicObject::isDead);
+
+
+        for (Balle balle : balls) {
+            balle.update();
+        }
+
+        if (Math.random() < 0.005) {
+            Monster monster = new Monster(zone1);
+            AutoShoot autoShoot = new AutoShoot(player, monster);
+            Arme armed = new Arme(monster);
+            armed.attachToMonster(monster);
+            container.getChildren().add(monster.getCorps());
+            container.getChildren().add(armed.getCorps());
+            monstres.add(monster);
+            arme.rotateArme(autoShoot.getAngel() + 180);
+            armed.rotateArme(autoShoot.getAngel() + 6);
+            arme_enemy.add(armed);
+
+            new AnimationTimer() {
+                private long lastUpdate = 0;
+
                 @Override
-                public void run() {
-                    time.setText((" Time  " + heurs + ":" + minutes + ":" + seconds + "               "));
-                    seconds++;
-                    if (seconds == 60) {
-                        minutes++;
-                        seconds = 0;
+                public void handle(long now) {
+                    if (lastUpdate == 0) {
+                        lastUpdate = now;
+                        return;
                     }
-                    if (minutes == 60) {
-                        heurs++;
-                        minutes = 0;
+//                    if(minutes >=1){
+//                        setProba_monster(1090000000);
+//                    }
+                    //test
+                    if(seconds >=10){
+                        setProba_monster(1090000000);
+                    }
+                    if (now - lastUpdate > proba_monster) {
+                        Balle ball = new Balle(armed);
+                        //ball.MakeItMove(-autoShoot.getAngel());
+                        if (monster.isAlive()) {
+                            container.getChildren().add(ball.getCorps());
+                            balls_enemy.add(ball);
+                            if(player.getCorps().getTranslateX()<=70){
+                                player.getCorps().setTranslateX(player.corps.getTranslateX() + 70);
+                                arme.attachToPlayer(player);
+                                arme.updateSortie();
+                            }else if (player.getCorps().getTranslateX()>=1130){
+                                player.getCorps().setTranslateX(player.corps.getTranslateX() - 70);
+                                arme.attachToPlayer(player);
+                                arme.updateSortie();
+                            }else{
+                                player.getCorps().setTranslateX(player.corps.getTranslateX() + 70);
+                                arme.attachToPlayer(player);
+                                arme.updateSortie();
+                            }
+                        }
+
+                        lastUpdate = now;
                     }
                 }
-            }, 0, 1, TimeUnit.SECONDS);
-            // write your code here
-            Application.launch(args);
+            }.start();
+//////////////////////////////////////////////////
         }
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+    }
 
-        private void createContent () {
+    public static void main(String[] args) {
+        final ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        ses.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                time.setText((" Time  " + heurs + ":" + minutes + ":" + seconds + "               "));
+                seconds++;
+                if (seconds == 60) {
+                    minutes++;
+                    seconds = 0;
+                }
+                if (minutes == 60) {
+                    heurs++;
+                    minutes = 0;
+                }
+            }
+        }, 0, 1, TimeUnit.SECONDS);
+        // write your code here
+        Application.launch(args);
+    }
+
+    private void createContent() {
 
 //        container.setBackground(new Background(myBF));
-            container.getChildren().add(gp);
-            line.setStrokeWidth(0);
-            container.getChildren().add(line);
-            porte.setFill(Color.GREEN);
-            container.getChildren().add(porte);
-            container.getChildren().add(player.getCorps());
-            container.getChildren().add(arme.getCorps());
-            container.getChildren().add(arme.getSortie());
+        container.getChildren().add(gp);
+        line.setStrokeWidth(0);
+        container.getChildren().add(line);
+        porte.setFill(Color.GREEN);
+        container.getChildren().add(porte);
+        container.getChildren().add(player.getCorps());
+        container.getChildren().add(arme.getCorps());
+        container.getChildren().add(arme.getSortie());
 
-            toolBar.setAlignment(Pos.CENTER_RIGHT);
-            toolBar.setPrefHeight(25);
-            toolBar.setMinHeight(25);
-            toolBar.setMaxHeight(25);
-            toolBar.getChildren().add(new topBar());
-            container.getChildren().add(toolBar);
-        }
-
-        class topBar extends HBox {
-            public topBar() {
-                txtBallesTires.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-                txtBallesTires.setFill(Color.WHITE);
-                txtMonstresTues.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-                txtMonstresTues.setFill(Color.WHITE);
-                time.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-                time.setFill(Color.WHITE);
-                txtLife.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-                txtLife.setFill(Color.WHITE);
-                this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, txtLife);
-                this.setStyle("-fx-padding: 5 0 5 0;-fx-background-color: #000000  ;");
-                this.setMinWidth(widthWindow);
-            }
-
-        }
-
-        @Override
-        public void start (Stage window) throws Exception {
-            window.setWidth(widthWindow);
-            window.setHeight(heightWindow);
-            window.setTitle("War Game!");
-
-
-            // set background
-            container.setBackground(background);
-
-            createContent();
-
-            HBox toolBar = new HBox();
-            toolBar.setAlignment(Pos.CENTER_RIGHT);
-            toolBar.setPrefHeight(25);
-            toolBar.setMinHeight(25);
-            toolBar.setMaxHeight(25);
-            toolBar.getChildren().add(new topBar());
-            container.getChildren().add(toolBar);
-
-
-            Scene scene = new Scene(container);
-            window.setScene(scene);
-            shooting.start();
-            animation.start();
-            scene.setOnKeyPressed(event);
-            window.show();
-        }
+        toolBar.setAlignment(Pos.CENTER_RIGHT);
+        toolBar.setPrefHeight(25);
+        toolBar.setMinHeight(25);
+        toolBar.setMaxHeight(25);
+        toolBar.getChildren().add(new topBar());
+        container.getChildren().add(toolBar);
     }
+
+    class topBar extends HBox {
+        public topBar() {
+            txtBallesTires.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+            txtBallesTires.setFill(Color.WHITE);
+            txtMonstresTues.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+            txtMonstresTues.setFill(Color.WHITE);
+            time.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+            time.setFill(Color.WHITE);
+            txtLife.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+            txtLife.setFill(Color.WHITE);
+            this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, txtLife);
+            this.setStyle("-fx-padding: 5 0 5 0;-fx-background-color: #000000  ;");
+            this.setMinWidth(widthWindow);
+        }
+
+    }
+
+    @Override
+    public void start(Stage window) throws Exception {
+        window.setWidth(widthWindow);
+        window.setHeight(heightWindow);
+        window.setTitle("War Game!");
+
+
+        // set background
+        container.setBackground(background);
+
+        createContent();
+
+        HBox toolBar = new HBox();
+        toolBar.setAlignment(Pos.CENTER_RIGHT);
+        toolBar.setPrefHeight(25);
+        toolBar.setMinHeight(25);
+        toolBar.setMaxHeight(25);
+        toolBar.getChildren().add(new topBar());
+        container.getChildren().add(toolBar);
+
+
+        Scene scene = new Scene(container);
+        window.setScene(scene);
+        shooting.start();
+        animation.start();
+        scene.setOnKeyPressed(event);
+        window.show();
+    }
+}
