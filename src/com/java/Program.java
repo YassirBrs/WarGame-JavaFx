@@ -41,6 +41,7 @@ public class Program extends Application {
         }
     }
 
+    
     // create a image
     Image image = new Image(input);
 
