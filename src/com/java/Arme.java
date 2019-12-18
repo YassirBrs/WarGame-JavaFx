@@ -66,11 +66,11 @@ public class Arme {
     //si on Y:tourner a gauche
 
     public void rotateRight() {
-        corps.setRotate(corps.getRotate() - 5);
+        corps.setRotate(corps.getRotate() - 25);
     }
 
     public void rotateLeft() {
-        corps.setRotate(corps.getRotate() + 5);
+        corps.setRotate(corps.getRotate() + 25);
     }
 
     public double getRotate() {

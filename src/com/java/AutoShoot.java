@@ -27,15 +27,8 @@ public class AutoShoot {
     public AutoShoot(Player p, Monster m) {
         this.p = p;
         this.m = m;
-        this.z = p.getCorps().getTranslateY() - m.getCorps().getTranslateY();
-        this.y = p.getCorps().getTranslateX() - m.getCorps().getTranslateX();
-//        this.zy=(int)Math.pow(y,2)-(int)Math.pow(z,2);
-//        if (this.zy>=0){
-//            this.x=Math.sqrt(zy);
-//        }else{
-//            this.x=Math.sqrt(-zy);
-//            this.x=-this.x;
-//        }
+        this.z = m.getCorps().getTranslateY() - p.getCorps().getTranslateY();
+        this.y = m.getCorps().getTranslateX() - p.getCorps().getTranslateX();
         this.t = (float)Math.atan2(y , z);
         this.setAngel((float) Math.toDegrees(t));
         System.out.println(angel);
