@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public class Arme {
-    private Rectangle corps = new Rectangle(-5, 0, 10, 10);
+    private Rectangle corps = new Rectangle(-5, 0, 0, 0);
 
     public Rectangle getCorps() {
         return corps;

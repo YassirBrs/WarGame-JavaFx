@@ -10,7 +10,7 @@ public class Monster extends GraphicObject {
     public Monster(Zone zone) {
         Image image = null;
         try {
-            image = new Image(new FileInputStream("GamePic/monster.png"));
+            image = new Image(new FileInputStream("GamePic/birrd2.gif"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
