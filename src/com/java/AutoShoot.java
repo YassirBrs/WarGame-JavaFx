@@ -31,7 +31,7 @@ public class AutoShoot {
         this.y = m.getCorps().getTranslateX() - p.getCorps().getTranslateX();
         this.t = (float)Math.atan2(y , z);
         this.setAngel((float) Math.toDegrees(t));
-        System.out.println(angel);
+//        System.out.println(angel);
     }
 
 

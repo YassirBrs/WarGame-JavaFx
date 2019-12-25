@@ -20,10 +20,16 @@ import javafx.stage.Stage;
 
 import javafx.scene.shape.Line;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -86,6 +92,8 @@ public class Program extends Application {
     public static int minutes = 00;
     public static int seconds = 00;
 
+
+
     private static Text time = new Text(" Time (" + heurs + ":" + minutes + ":" + seconds + " )               ");
 
     BackgroundFill myBF = new BackgroundFill(Color.BLUEVIOLET, new CornerRadii(1), null);
@@ -96,11 +104,14 @@ public class Program extends Application {
     private Player player = new Player(zone2);
     private List<Monster> monstres = new ArrayList<>();
     private List<Balle> balls = new ArrayList<>();
+    private List<Weapon> Weapons = new ArrayList<>();
     private Arme arme = new Arme(player);
-    private List<Arme> arme_enemy = new ArrayList<>(); //////////////////////////////////////////////////
-    private List<List<Balle>> AllBalls = new ArrayList<List<Balle>>();//////////////////////////////////////////////////
-    List<Balle> balls_enemy = new ArrayList<>();//////////////////////////////////////////////////
+    private List<Arme> arme_enemy = new ArrayList<>();
+    List<Balle> balls_enemy = new ArrayList<>();
 
+
+
+    //Animation Timer of Gameover
     AnimationTimer shooting = new AnimationTimer() {
         private long lastUpdate = 0;
 
@@ -111,7 +122,7 @@ public class Program extends Application {
                 return;
             }
 
-            if (now - lastUpdate > 700000000) {
+            if (now - lastUpdate > 300000000) {
                 if (player.isAlive()) {
                     Balle ball = new Balle(arme);
                     container.getChildren().add(ball.getCorps());
@@ -128,7 +139,6 @@ public class Program extends Application {
     };
 
 
-//Animation Timer of Gameover
 
     AnimationTimer animation = new AnimationTimer() {
         @Override
@@ -175,7 +185,7 @@ public class Program extends Application {
                         heurs = 0;
                         minutes = 0;
                         seconds = 0;
-                        nbLife = 3;
+                        nbLife = 5;
                         monstres.clear();
                         balls.clear();
                         balls_enemy.clear();
@@ -229,9 +239,6 @@ public class Program extends Application {
                 player.getCorps().setTranslateX(player.corps.getTranslateX() - 5);
                 arme.attachToPlayer(player);
                 arme.updateSortie();
-//                for (Arme arme_shoot : arme_enemy) {
-//                	arme_shoot.
-//                }
             }
             if (event.getCode() == KeyCode.RIGHT) {
                 player.getCorps().setTranslateX(player.corps.getTranslateX() + 5);
@@ -250,7 +257,20 @@ public class Program extends Application {
             }
         }
     };
+    //follow mouse
+    AnimationTimer followMouse =new AnimationTimer() {
+        @Override
+        public void handle(long now) {
+//            System.out.println("position player = "+player.getCorps().getTranslateX());
+//            System.out.println("position mouse = "+MouseInfo.getPointerInfo().getLocation().x);
 
+            player.getCorps().setTranslateX(MouseInfo.getPointerInfo().getLocation().x-400) ;
+
+            arme.attachToPlayer(player);
+            arme.updateSortie();
+
+        }
+    };
     private void refreshContent() {
         //parcourir la collection des balles pour mettre a jour leur position
         //eliminer les monsters
@@ -262,7 +282,11 @@ public class Program extends Application {
                     balle.setAlive(false);
                     monstre.setAlive(false);
                     nbMonstresTues++;
+                    if(nbMonstresTues%15==0){
+                        nbLife++;
+                    }
                 }
+                txtLife.setText(" Life ( " + nbLife + " )");
                 txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
 
 
@@ -278,6 +302,7 @@ public class Program extends Application {
                 }
             }
         }
+
         //aimbot monster
         for (Balle balls : balls_enemy) {
 
@@ -293,11 +318,6 @@ public class Program extends Application {
                 container.getChildren().remove(balls.getCorps());
                 balls.setAlive(false);
                 Sounds.SoundPlayerHit();
-//                    try {
-//                        TimeUnit.MILLISECONDS.sleep(50);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
                 nbLife--;
                 if (nbLife <= 0) {
                     player.setAlive(false);
@@ -319,7 +339,18 @@ public class Program extends Application {
         for (Balle balle : balls) {
             balle.update();
         }
+        new AnimationTimer(){
+            @Override
+            public void handle(long now) {
 
+                for(Monster monster:monstres){
+                    AutoShoot autoShoot = new AutoShoot(player, monster);
+                    Arme armed=new Arme(monster);
+                    armed.rotateArme(autoShoot.getAngel() + 6);
+
+                }
+            }
+        }.start();
         if (Math.random() < 0.005) {
             Monster monster = new Monster(zone1);
             AutoShoot autoShoot = new AutoShoot(player, monster);
@@ -328,8 +359,8 @@ public class Program extends Application {
             container.getChildren().add(monster.getCorps());
             container.getChildren().add(armed.getCorps());
             monstres.add(monster);
-            arme.rotateArme(autoShoot.getAngel() + 180);
-            armed.rotateArme(autoShoot.getAngel() + 6);
+//            arme.rotateArme(autoShoot.getAngel() + 180);
+            armed.rotateArme(autoShoot.getAngel() +6);
             arme_enemy.add(armed);
 
             new AnimationTimer() {
@@ -349,34 +380,20 @@ public class Program extends Application {
                         setProba_monster(1090000000);
                     }
                     if (now - lastUpdate > proba_monster) {
+//                        armed.rotateArme(autoShoot.getAngel() +6);
                         Balle ball = new Balle(armed);
                         //ball.MakeItMove(-autoShoot.getAngel());
                         if (monster.isAlive()) {
                             container.getChildren().add(ball.getCorps());
                             balls_enemy.add(ball);
-                            if(player.getCorps().getTranslateX()<=70){
-                                player.getCorps().setTranslateX(player.corps.getTranslateX() + 70);
-                                arme.attachToPlayer(player);
-                                arme.updateSortie();
-                            }else if (player.getCorps().getTranslateX()>=1130){
-                                player.getCorps().setTranslateX(player.corps.getTranslateX() - 70);
-                                arme.attachToPlayer(player);
-                                arme.updateSortie();
-                            }else{
-                                player.getCorps().setTranslateX(player.corps.getTranslateX() + 70);
-                                arme.attachToPlayer(player);
-                                arme.updateSortie();
-                            }
                         }
 
                         lastUpdate = now;
                     }
                 }
             }.start();
-//////////////////////////////////////////////////
         }
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
+
     }
 
     public static void main(String[] args) {
@@ -402,7 +419,6 @@ public class Program extends Application {
 
     private void createContent() {
 
-//        container.setBackground(new Background(myBF));
         container.getChildren().add(gp);
         line.setStrokeWidth(0);
         container.getChildren().add(line);
@@ -419,8 +435,9 @@ public class Program extends Application {
         toolBar.getChildren().add(new topBar());
         container.getChildren().add(toolBar);
     }
-
     class topBar extends HBox {
+
+
         public topBar() {
             txtBallesTires.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
             txtBallesTires.setFill(Color.WHITE);
@@ -434,7 +451,6 @@ public class Program extends Application {
             this.setStyle("-fx-padding: 5 0 5 0;-fx-background-color: #000000  ;");
             this.setMinWidth(widthWindow);
         }
-
     }
 
     @Override
@@ -442,7 +458,6 @@ public class Program extends Application {
         window.setWidth(widthWindow);
         window.setHeight(heightWindow);
         window.setTitle("War Game!");
-
 
         // set background
         container.setBackground(background);
@@ -459,7 +474,10 @@ public class Program extends Application {
 
 
         Scene scene = new Scene(container);
+        scene.setCursor(javafx.scene.Cursor.NONE);
         window.setScene(scene);
+
+        followMouse.start();
         shooting.start();
         animation.start();
         scene.setOnKeyPressed(event);

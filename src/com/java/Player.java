@@ -10,7 +10,7 @@ public class Player extends GraphicObject {
     public Player(Zone zone) {
         Image image = null;
         try {
-            image = new Image(new FileInputStream("GamePic/player.png"));
+            image = new Image(new FileInputStream("GamePic/vatican2.gif"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
