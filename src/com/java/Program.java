@@ -21,15 +21,10 @@ import javafx.stage.Stage;
 import javafx.scene.shape.Line;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +65,7 @@ public class Program extends Application {
     private int nbLife = 5;
     private Text txtMonstresTues = new Text(" Monstres Killed : " + nbBallesTires + "               ");
     private Text txtBallesTires = new Text(" Balls Shooted : " + nbMonstresTues + "               ");
-    private Text txtLife = new Text(" Life ( " + nbLife + " )");
+    private Text txtLife = new Text(" : " + nbLife + " ");
     private Boolean isGameOver = false;
 
     private double proba_monster = 1909999999;
@@ -104,7 +99,9 @@ public class Program extends Application {
     private List<Arme> arme_enemy = new ArrayList<>();
     List<Balle> balls_enemy = new ArrayList<>();
 
+    Thread Gameover=new Thread(){
 
+    };
     //Animation Timer of Gameover
     AnimationTimer shooting = new AnimationTimer() {
         private long lastUpdate = 0;
@@ -118,24 +115,14 @@ public class Program extends Application {
 
             if (now - lastUpdate > 300000000) {
                 if (player.isAlive()) {
-//                    Balle ball = new Balle(arme);
                     Weapon weapon = new Weapon(arme);
-
                     container.getChildren().add(weapon.getCorps());
                     weapons.add(weapon);
                     //AutoShoot autoShoot = new AutoShoot(player);
 //                    arme.resetArm(autoShoot.getAngel());
-                    new AnimationTimer() {
-                        @Override
-                        public void handle(long now) {
-                            if (player.isAlive()) {
-                                weapon.rotate();
-                            }
-                        }
-                    }.start();
                 }
                 nbBallesTires++;
-                txtBallesTires.setText(" Balles shooted : " + nbBallesTires + "               ");
+                txtBallesTires.setText(" Axe shooted : " + nbBallesTires + "               ");
                 lastUpdate = now;
             }
         }
@@ -199,7 +186,8 @@ public class Program extends Application {
                         txtMonstresTues.setText(" Monstres killed : 0                ");
                         nbBallesTires = 0;
                         txtBallesTires.setText(" Balles shooted : 0                ");
-                        txtLife.setText(" Life ( 5 )");
+                        nbLife=5;
+                        txtLife.setText(" : " + nbLife + " ");
                         player.setAlive(true);
                         isGameOver = false;
                         container.getChildren().remove(cc);
@@ -208,7 +196,6 @@ public class Program extends Application {
                 });
                 replay.setFitWidth(200);
                 replay.setFitHeight(53);
-//                replay.setStyle(se);
                 replay.setLayoutY(replay.getLayoutY() + 10);
                 Text finalTime = new Text("              Time ( " + heurs + ":" + minutes + ":" + seconds + " )               ");
                 Text finalMonstre = new Text("              Monstres Killed : " + nbMonstresTues + "               ");
@@ -223,7 +210,6 @@ public class Program extends Application {
                 cc.setPrefHeight(heightWindow);
                 cc.setAlignment(Pos.CENTER);
                 cc.setBackground(background);
-//                cc.setStyle("-fx-padding: 5 0 5 10;-fx-background-color: #000000;");
                 cc.getChildren().addAll(gameOver, finalTime, finalMonstre, finalBalles, replay);
                 container.getChildren().addAll(cc);
             } else {
@@ -293,7 +279,7 @@ public class Program extends Application {
                         nbLife++;
                     }
                 }
-                txtLife.setText(" Life ( " + nbLife + " )");
+                txtLife.setText(" : " + nbLife + " ");
                 txtMonstresTues.setText(" Monstres Killed : " + nbMonstresTues + "               ");
 
 
@@ -326,7 +312,7 @@ public class Program extends Application {
                     }
                     isGameOver = true;
                 }
-                txtLife.setText(" Life ( " + nbLife + " )");
+                txtLife.setText(" : " + nbLife + " ");
             }
         }
 
@@ -440,7 +426,13 @@ public class Program extends Application {
             time.setFill(Color.WHITE);
             txtLife.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
             txtLife.setFill(Color.WHITE);
-            this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, txtLife);
+            Image image = null;
+            try {
+                image = new Image(new FileInputStream("GamePic/heart.png"));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            this.getChildren().addAll(txtMonstresTues, txtBallesTires, time, new ImageView(image),txtLife);
             this.setStyle("-fx-padding: 5 0 5 0;-fx-background-color: #000000  ;");
             this.setMinWidth(widthWindow);
         }

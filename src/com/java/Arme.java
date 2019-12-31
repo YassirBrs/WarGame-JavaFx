@@ -58,7 +58,7 @@ public class Arme {
     //////////////////////////////////////////////////
     public void updateSortie() {
         sortie.setCenterX(corps.getTranslateX());
-        sortie.setCenterY(corps.getTranslateY() + 25);
+        sortie.setCenterY(corps.getTranslateY() );
 
     }
 

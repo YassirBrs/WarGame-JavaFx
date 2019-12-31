@@ -10,10 +10,15 @@ public class Monster extends GraphicObject {
     public Monster(Zone zone) {
         Image image = null;
         try {
-            image = new Image(new FileInputStream("GamePic/birrd2.gif"));
+            Image[] imgs = new Image[3];
+            imgs[0] = new Image(new FileInputStream("GamePic/biirrd.gif"));
+            imgs[1] = new Image(new FileInputStream("GamePic/birrd2.gif"));
+            int a=(int)(Math.random()*2);
+            image = imgs[a];
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         corps = new ImageView(image);
         ((ImageView) corps).setX(0);
         ((ImageView) corps).setY(0);
