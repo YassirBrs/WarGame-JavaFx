@@ -21,6 +21,6 @@ public class Player extends GraphicObject {
         double x = zone.getX1() + 50 + (zone.getX2() - zone.getX1());
         double y = zone.getY1() + (zone.getY2() - zone.getY1());
         corps.setTranslateX((zone.getX2() - 50) / 2);
-        corps.setTranslateY((zone.getY2() -145) );
+        corps.setTranslateY((zone.getY2() -195) );
     }
 }

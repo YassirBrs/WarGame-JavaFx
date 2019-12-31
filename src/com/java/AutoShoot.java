@@ -2,7 +2,7 @@ package com.java;
 
 public class AutoShoot {
     public Player p;
-    public Monster m;
+    public Arme m;
 
     public double getAngel() {
         return angel;
@@ -24,7 +24,7 @@ public class AutoShoot {
         this.p = p;
     }
 
-    public AutoShoot(Player p, Monster m) {
+    public AutoShoot(Player p, Arme m) {
         this.p = p;
         this.m = m;
         this.z = m.getCorps().getTranslateY() - p.getCorps().getTranslateY();

@@ -37,19 +37,15 @@ import java.util.concurrent.TimeUnit;
 public class Program extends Application {
     //BackGround
     // create a input stream
-    FileInputStream input;
+    Image image;
 
     {
         try {
-            input = new FileInputStream("GamePic/backk.gif");
+            image = new Image(new FileInputStream("GamePic/backk3.gif"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
-
-
-    // create a image
-    Image image = new Image(input);
 
     // create a background image
     BackgroundImage backgroundimage = new BackgroundImage(image,
@@ -93,7 +89,6 @@ public class Program extends Application {
     public static int seconds = 00;
 
 
-
     private static Text time = new Text(" Time (" + heurs + ":" + minutes + ":" + seconds + " )               ");
 
     BackgroundFill myBF = new BackgroundFill(Color.BLUEVIOLET, new CornerRadii(1), null);
@@ -110,7 +105,6 @@ public class Program extends Application {
     List<Balle> balls_enemy = new ArrayList<>();
 
 
-
     //Animation Timer of Gameover
     AnimationTimer shooting = new AnimationTimer() {
         private long lastUpdate = 0;
@@ -125,7 +119,7 @@ public class Program extends Application {
             if (now - lastUpdate > 300000000) {
                 if (player.isAlive()) {
 //                    Balle ball = new Balle(arme);
-                    Weapon weapon=new Weapon(arme);
+                    Weapon weapon = new Weapon(arme);
 
                     container.getChildren().add(weapon.getCorps());
                     weapons.add(weapon);
@@ -134,7 +128,7 @@ public class Program extends Application {
                     new AnimationTimer() {
                         @Override
                         public void handle(long now) {
-                            if (player.isAlive()){
+                            if (player.isAlive()) {
                                 weapon.rotate();
                             }
                         }
@@ -146,7 +140,6 @@ public class Program extends Application {
             }
         }
     };
-
 
 
     AnimationTimer animation = new AnimationTimer() {
@@ -271,19 +264,20 @@ public class Program extends Application {
         }
     };
     //follow mouse
-    AnimationTimer followMouse =new AnimationTimer() {
+    AnimationTimer followMouse = new AnimationTimer() {
         @Override
         public void handle(long now) {
 //            System.out.println("position player = "+player.getCorps().getTranslateX());
 //            System.out.println("position mouse = "+MouseInfo.getPointerInfo().getLocation().x);
 
-            player.getCorps().setTranslateX(MouseInfo.getPointerInfo().getLocation().x-400) ;
+            player.getCorps().setTranslateX(MouseInfo.getPointerInfo().getLocation().x - 400);
 
             arme.attachToPlayer(player);
             arme.updateSortie();
 
         }
     };
+
     private void refreshContent() {
         //parcourir la collection des balles pour mettre a jour leur position
         //eliminer les monsters
@@ -295,7 +289,7 @@ public class Program extends Application {
                     weapon.setAlive(false);
                     monstre.setAlive(false);
                     nbMonstresTues++;
-                    if(nbMonstresTues%15==0){
+                    if (nbMonstresTues % 15 == 0) {
                         nbLife++;
                     }
                 }
@@ -318,15 +312,7 @@ public class Program extends Application {
 
         //aimbot monster
         for (Balle balls : balls_enemy) {
-
             balls.update();
-            for (Monster monstre : monstres) {
-                for (Arme arme_shoot : arme_enemy) {
-                    AutoShoot autoShoot = new AutoShoot(player, monstre);
-                    arme_shoot.rotateArme(autoShoot.getAngel());
-                }
-            }
-
             if (balls.touch(player)) {
                 container.getChildren().remove(balls.getCorps());
                 balls.setAlive(false);
@@ -348,33 +334,26 @@ public class Program extends Application {
         balls.removeIf(GraphicObject::isDead);
         balls_enemy.removeIf(GraphicObject::isDead);
         weapons.removeIf(GraphicObject::isDead);
-
+        new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                for (Arme arme_shoot : arme_enemy) {
+                    AutoShoot autoShoot = new AutoShoot(player, arme_shoot);
+                    arme_shoot.rotateArme(autoShoot.getAngel() + 6);
+                }
+            }
+        }.start();
 
         for (Weapon weapon : weapons) {
             weapon.update();
         }
-        new AnimationTimer(){
-            @Override
-            public void handle(long now) {
-
-                for(Monster monster:monstres){
-                    AutoShoot autoShoot = new AutoShoot(player, monster);
-                    Arme armed=new Arme(monster);
-                    armed.rotateArme(autoShoot.getAngel() + 6);
-
-                }
-            }
-        }.start();
         if (Math.random() < 0.005) {
             Monster monster = new Monster(zone1);
-            AutoShoot autoShoot = new AutoShoot(player, monster);
             Arme armed = new Arme(monster);
             armed.attachToMonster(monster);
             container.getChildren().add(monster.getCorps());
             container.getChildren().add(armed.getCorps());
             monstres.add(monster);
-//            arme.rotateArme(autoShoot.getAngel() + 180);
-            armed.rotateArme(autoShoot.getAngel() +6);
             arme_enemy.add(armed);
 
             new AnimationTimer() {
@@ -390,13 +369,11 @@ public class Program extends Application {
 //                        setProba_monster(1090000000);
 //                    }
                     //test
-                    if(seconds >=10){
+                    if (seconds >= 10) {
                         setProba_monster(1090000000);
                     }
                     if (now - lastUpdate > proba_monster) {
-//                        armed.rotateArme(autoShoot.getAngel() +6);
                         Balle ball = new Balle(armed);
-                        //ball.MakeItMove(-autoShoot.getAngel());
                         if (monster.isAlive()) {
                             container.getChildren().add(ball.getCorps());
                             balls_enemy.add(ball);
@@ -450,6 +427,7 @@ public class Program extends Application {
         toolBar.getChildren().add(new topBar());
         container.getChildren().add(toolBar);
     }
+
     class topBar extends HBox {
 
 
