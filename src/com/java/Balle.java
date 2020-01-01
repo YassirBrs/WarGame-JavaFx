@@ -8,7 +8,7 @@ public class Balle extends GraphicObject {
     private Point2D direction = new Point2D(0, 0);
 
     public Balle(Arme arme) {
-        corps = new Circle(-6, 0, 4, Color.WHITE);
+        corps = new Circle(-6, 0, 5, Color.WHITE);
         corps.setTranslateX(arme.getCorps().getTranslateX());
         corps.setTranslateY(arme.getCorps().getTranslateY());
         updateDirection(arme.getRotate());
