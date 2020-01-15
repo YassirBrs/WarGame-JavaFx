@@ -26,7 +26,6 @@ public class Balle extends GraphicObject {
         direction = p.normalize().multiply(7);
     }
 
-    //////////////////////////////////////////////////
     public void MakeItMove(double rotation) {
         Point2D p;
         double x = Math.cos(Math.toRadians(rotation));
@@ -35,7 +34,6 @@ public class Balle extends GraphicObject {
         direction = p.normalize().multiply(9);
     }
 
-    //////////////////////////////////////////////////
     public void update() {
         corps.setTranslateX(corps.getTranslateX() + direction.getX());
         corps.setTranslateY(corps.getTranslateY() + direction.getY());

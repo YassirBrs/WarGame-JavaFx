@@ -1,6 +1,6 @@
 package com.java;
 
-public class AutoShoot {
+public class AimBot {
     public Player p;
     public Arme m;
 
@@ -20,11 +20,11 @@ public class AutoShoot {
     public double x;
     public double t;
 
-    public AutoShoot(Player p) {
+    public AimBot(Player p) {
         this.p = p;
     }
 
-    public AutoShoot(Player p, Arme m) {
+    public AimBot(Player p, Arme m) {
         this.p = p;
         this.m = m;
         this.z = m.getCorps().getTranslateY() - p.getCorps().getTranslateY();
@@ -35,8 +35,4 @@ public class AutoShoot {
     }
 
 
-//    public double getAngell(double z){
-//        double a=Math.acos(z/(x));
-//        return this.angel=a;
-//    }
 }

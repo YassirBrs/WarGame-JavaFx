@@ -32,7 +32,6 @@ public class GraphicObject {
     }
 
     public boolean touch(double x, double y, double w, double h) {
-        //return corps.getBoundsInParent().intersects();
         return corps.getBoundsInParent().intersects(x, y, w, h);
     }
 }

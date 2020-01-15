@@ -58,7 +58,7 @@ public class Program extends Application {
     private double widthWindow = 1200;
     private double heightWindow = 945;
     public Rectangle porte = new Rectangle(widthWindow - 23, 350, 0, 0);
-    //    public  AutoShoot autoShoot=new AutoShoot(Player)
+    //    public  AimBot autoShoot=new AimBot(Player)
     private Pane container = new Pane();
     private GridPane gp = new GridPane();
     HBox toolBar = new HBox();
@@ -138,7 +138,7 @@ public class Program extends Application {
         player.setAlive(true);
     }
 
-    //Animation Timer of Gameover
+    //Animation Timer of player shoot
     AnimationTimer shooting = new AnimationTimer() {
         private long lastUpdate = 0;
 
@@ -154,7 +154,7 @@ public class Program extends Application {
                     Weapon weapon = new Weapon(arme);
                     container.getChildren().add(weapon.getCorps());
                     weapons.add(weapon);
-                    //AutoShoot autoShoot = new AutoShoot(player);
+                    //AimBot autoShoot = new AimBot(player);
 //                    arme.resetArm(autoShoot.getAngel());
                 }
                 nbBallesTires++;
@@ -205,7 +205,7 @@ public class Program extends Application {
                 Text finalMonstre = new Text("             Birds Killed : " + nbMonstresTues + "               ");
                 finalTime.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
                 finalTime.setFill(Color.WHITE);
-                Text finalBalles = new Text("              Balles Shooted : " + nbBallesTires + "               ");
+                Text finalBalles = new Text("              Axe Shooted : " + nbBallesTires + "               ");
                 finalMonstre.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
                 finalMonstre.setFill(Color.WHITE);
                 finalBalles.setFont(Font.font("Verdana", FontWeight.NORMAL, 20));
@@ -257,6 +257,7 @@ public class Program extends Application {
                         shooting.start();
                     }
                 });
+
                 replay.setFitWidth(200);
                 replay.setFitHeight(53);
                 replay.setLayoutY(replay.getLayoutY() + 10);
@@ -381,8 +382,8 @@ public class Program extends Application {
             @Override
             public void handle(long now) {
                 for (Arme arme_shoot : arme_enemy) {
-                    AutoShoot autoShoot = new AutoShoot(player, arme_shoot);
-                    arme_shoot.rotateArme(autoShoot.getAngel() + 6);
+                    AimBot aimBot = new AimBot(player, arme_shoot);
+                    arme_shoot.rotateArme(aimBot.getAngel() + 6);
                 }
             }
         }.start();
